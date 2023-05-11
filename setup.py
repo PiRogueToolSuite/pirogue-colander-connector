@@ -1,4 +1,8 @@
 from setuptools import find_packages, setup
+from pathlib import Path
+
+pwd = Path(__file__).parent
+long_description = (pwd / "README.md").read_text()
 
 install_required = [
     'colander-client',
@@ -11,6 +15,8 @@ setup(
     author="U+039b",
     author_email="hello@pts-project.org",
     description="CLI interface to transfer data from the PiRogue to Colander",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url="https://github.com/PiRogueToolSuite/pirogue-colander-connector",
     install_requires=install_required,
     packages=find_packages(),
@@ -21,8 +27,11 @@ setup(
         ],
     },
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GPL-3.0 License",
-        "Operating System :: OS Independent",
+        'Development Status :: 3 - Alpha',
+        'License :: OSI Approved :: GNU General Public License v3',
+        'Natural Language :: English',
+        'Topic :: Security',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Utilities',
     ],
 )
