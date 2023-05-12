@@ -4,7 +4,7 @@ import pathlib
 from functools import partial
 
 from colander_client.client import Client
-from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn, TaskID
+from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn, TaskID, TextColumn, BarColumn, TimeRemainingColumn
 
 from pirogue_colander_connector.commands.configure import Configuration
 
@@ -32,7 +32,10 @@ class ArtifactCollector:
         self.artifact_type = self.colander_client.get_artifact_type_by_short_name(artifact_type_name)
         self.progress = Progress(
             SpinnerColumn(),
-            *Progress.get_default_columns(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TimeRemainingColumn(),
             TimeElapsedColumn(),
         )
         self.progress.start()

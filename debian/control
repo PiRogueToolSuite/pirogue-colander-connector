@@ -15,4 +15,5 @@ Package: pirogue-colander-connector
 Architecture: all
 Depends: ${misc:Depends},
  ${python3:Depends},
+ python3-colander-client,
 Description: CLI interface to transfer data from the PiRogue to Colander.

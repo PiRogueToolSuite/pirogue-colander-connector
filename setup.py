@@ -6,7 +6,7 @@ long_description = (pwd / "README.md").read_text()
 
 install_required = [
     'colander-client',
-    'rich'
+    'rich==9.11.0'
 ]
 
 setup(
