@@ -1,6 +1,5 @@
 import json
 import os
-import argparse
 
 from colander_client.client import Client
 

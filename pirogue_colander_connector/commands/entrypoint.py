@@ -1,10 +1,9 @@
 import argparse
 import logging
 import pathlib
-from typing import OrderedDict
 
 from rich.logging import RichHandler
-from rich.prompt import Prompt, IntPrompt
+from rich.prompt import Prompt
 
 from pirogue_colander_connector.collectors.artifact import ArtifactCollector
 from pirogue_colander_connector.collectors.experiment import ExperimentCollector
@@ -45,7 +44,7 @@ def main():
         'file',
         type=pathlib.Path)
     collect_artifact_group.add_argument(
-        '-i',
+        '-c',
         '--case_id',
         required=True,
         help='Specify the ID of the case you created in Colander'
@@ -58,10 +57,17 @@ def main():
         'path',
         type=pathlib.Path)
     collect_experiment_group.add_argument(
-        '-i',
+        '-c',
         '--case_id',
         required=True,
         help='Specify the ID of the case you created in Colander'
+    )
+    collect_experiment_group.add_argument(
+        '-t',
+        '--target_artifact',
+        required=False,
+        help='Specify the artifact you executed during this experiment',
+        type=pathlib.Path
     )
 
     args = arg_parser.parse_args()
@@ -73,25 +79,9 @@ def main():
         config = Configuration()
         config.write_configuration_file(args.base_url, args.api_key)
     elif args.func == 'collect-artifact':
-        config = Configuration()
-        client = config.get_colander_client()
-        artifact_types: list[OrderedDict] = client.get_artifact_types()
-        user_choices = []
-        index = 0
-        print('Select the type of the artifact you are about to upload:')
-        for t in artifact_types:
-            name = t.get('name')
-            print(f'{index} - {name}')
-            user_choices.append((t.get('id'), t.get('name'), t.get('short_name')))
-            index += 1
-        choice = IntPrompt.ask('Enter the number corresponding to the type you want to use')
-        if 0 > choice or choice > len(user_choices):
-            log.error('Invalid choice')
-            return
-        print(f'You have selected {user_choices[choice][1]}')
-        ac = ArtifactCollector(args.file, args.case_id, user_choices[choice][2])
+        ac = ArtifactCollector(args.file, args.case_id)
         ac.collect()
     elif args.func == 'collect-experiment':
         experiment_name = Prompt.ask('Enter the name of your experiment')
-        ec = ExperimentCollector(args.path, args.case_id, experiment_name)
+        ec = ExperimentCollector(args.path, args.case_id, experiment_name, target_artifact_path=args.target_artifact)
         ec.collect()
