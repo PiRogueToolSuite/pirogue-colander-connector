@@ -83,14 +83,19 @@ class ExperimentCollector:
         model = device_details.get('model', 'no model')
         imei = device_details.get('imei', 'xxx')
         device_name = f'{brand} - {model} ({imei})'
-        device = self.colander_client.create_device(
-            name=device_name,
-            case=self.colander_client.get_case(self.case_id),
-            device_type=self.colander_client.get_device_type_by_short_name('MOBILE'),
-            extra_params={
-                'attributes': device_details
-            }
-        )
+        case = self.colander_client.get_case(self.case_id)
+        devices = self.colander_client.get_devices(case=case, name=device_name)
+        if devices:
+            device = devices[0]
+        else:
+            device = self.colander_client.create_device(
+                name=device_name,
+                case=case,
+                device_type=self.colander_client.get_device_type_by_short_name('MOBILE'),
+                extra_params={
+                    'attributes': device_details
+                }
+            )
         return device
 
     def __dispatch_collection(self, file_type: str, details: dict):

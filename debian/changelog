@@ -1,3 +1,9 @@
+pirogue-colander-connector (1.0.3) unstable; urgency=medium
+
+  * Do not duplicate existing device
+
+ -- U+039b <hello@pts-project.org>  Fri, 16 Jun 2023 16:31:32 +0200
+
 pirogue-colander-connector (1.0.2) unstable; urgency=medium
 
   * Fix empty file sized uploads not supported
