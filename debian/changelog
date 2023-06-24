@@ -1,3 +1,9 @@
+pirogue-colander-connector (1.1.0) UNRELEASED; urgency=medium
+
+  * New upstream release, targeting Debian 12.
+
+ -- Cyril Brulebois <cyril@debamax.com>  Sat, 24 Jun 2023 02:14:29 +0200
+
 pirogue-colander-connector (1.0.3) unstable; urgency=medium
 
   * Do not duplicate existing device
