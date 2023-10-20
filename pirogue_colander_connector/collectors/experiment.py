@@ -43,6 +43,16 @@ class ExperimentCollector:
             log.error(msg)
             raise Exception(msg)
 
+    def __ensure_file_exists(self, details: dict):
+        filename: str = details.get('file')
+        file_path = f'{self.experiment_path}/{filename}'
+        if not os.path.exists(file_path) or not os.path.isfile(file_path):
+            with open(file_path, mode='w') as out:
+                if filename.endswith('.json'):
+                    out.write('[]')
+                else:
+                    out.write('\n')
+
     def collect(self):
         log.info(f'Reading the experiment details from {self.experiment_details_path}')
         with open(self.experiment_details_path) as f:
@@ -56,6 +66,7 @@ class ExperimentCollector:
             target_artifact = ta.collect()
         for file_type, details in experiment_details.items():
             log.info(f'Dispatch collection of the {file_type} artifact')
+            self.__ensure_file_exists(details)
             self.__dispatch_collection(file_type, details)
         pcap = self.artifacts.get('network', None)
         socket_trace = self.artifacts.get('socket_traces', None)

@@ -1,3 +1,9 @@
+pirogue-colander-connector (1.0.4) unstable; urgency=medium
+
+  * Create the requested file if it does not exist
+
+ -- U+039b <hello@pts-project.org>  Fri, 20 Oct 2023 16:19:50 +0200
+
 pirogue-colander-connector (1.0.3) unstable; urgency=medium
 
   * Do not duplicate existing device
