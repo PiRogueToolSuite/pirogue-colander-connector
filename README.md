@@ -1,3 +1,15 @@
+<div align="center">
+<img width="60px" src="https://pts-project.org/android-chrome-512x512.png">
+<h1>Colander connector for PiRogue</h1>
+<p>
+CLI interface to transfer data from the PiRogue to Colander. Have a look to our guides to <a href="https://pts-project.org/guides/" alt="Learn more about PiRogue">learn more how to use the PiRogue</a>.
+</p>
+<p>
+License: GPLv3
+</p>
+</div>
+
+
 # Colander connector for PiRogue
 CLI interface to transfer data from the PiRogue to Colander.
 
