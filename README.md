@@ -7,6 +7,11 @@ CLI interface to transfer data from the PiRogue to Colander. Have a look to our 
 <p>
 License: GPLv3
 </p>
+<p>
+<a href="https://pts-project.org">Website</a> | 
+<a href="https://pts-project.org/docs/colander/overview/">Documentation</a> | 
+<a href="https://discord.gg/qGX73GYNdp">Support</a>
+</p>
 </div>
 
 
