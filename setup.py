@@ -5,13 +5,13 @@ pwd = Path(__file__).parent
 long_description = (pwd / "README.md").read_text()
 
 install_required = [
-    'colander-client==1.0.2',
-    'rich==9.11.0'
+    'colander-client',
+    'rich'
 ]
 
 setup(
     name="pirogue-colander-connector",
-    version="1.0.4",
+    version="1.0.5",
     author="U+039b",
     author_email="hello@pts-project.org",
     description="CLI interface to transfer data from the PiRogue to Colander",

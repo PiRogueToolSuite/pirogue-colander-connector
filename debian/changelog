@@ -1,3 +1,9 @@
+pirogue-colander-connector (1.0.5) unstable; urgency=medium
+
+  * Remove unecessary constraints on python lib versions
+
+ -- U+039b <hello@pts-project.org>  Wed, 17 Jul 2024 22:32:32 +0200
+
 pirogue-colander-connector (1.0.4) unstable; urgency=medium
 
   * Create the requested file if it does not exist
