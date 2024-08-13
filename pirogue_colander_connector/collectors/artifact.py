@@ -1,9 +1,8 @@
+import json
 import logging
-import os.path
-import pathlib
 from functools import partial
+from pathlib import Path
 
-from colander_client.client import Client
 from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn, TaskID, TextColumn, BarColumn, TimeRemainingColumn
 from rich.prompt import IntPrompt
 
@@ -13,14 +12,7 @@ log = logging.getLogger(__name__)
 
 
 class ArtifactCollector:
-    colander_client: Client
-    case_id: str
-    artifact_path: pathlib.Path
-    artifact_type: str
-    progress_bar: Progress
-    attributes: dict
-
-    def __init__(self, artifact_path: [str, pathlib.Path], case_id: str, artifact_type_name: str = None,
+    def __init__(self, artifact_path: Path, case_id: str, artifact_type_name: str = 'OTHER',
                  attributes=None):
         configuration = Configuration()
         if not configuration.is_valid:
@@ -31,6 +23,9 @@ class ArtifactCollector:
         self.artifact_path = artifact_path
         self.case_id = case_id
         self.attributes = attributes or {}
+        self.artifact_type = None
+        self._load_extra_attributes()
+
         if not artifact_type_name:
             artifact_type_name = self.ask_type()
             self.artifact_type = self.colander_client.get_artifact_type_by_short_name(artifact_type_name)
@@ -39,6 +34,7 @@ class ArtifactCollector:
                 return
         else:
             self.artifact_type = self.colander_client.get_artifact_type_by_short_name(artifact_type_name)
+
         self.progress = Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
@@ -48,15 +44,18 @@ class ArtifactCollector:
             TimeElapsedColumn(),
         )
         self.progress.start()
-        if type(artifact_path) is str:
-            if not os.path.exists(artifact_path) or not os.path.isfile(artifact_path):
-                msg = f'{artifact_path} is not a file'
-                log.error(msg)
-                raise Exception(msg)
-        elif not artifact_path.exists() or not os.path.isfile(artifact_path):
-            msg = f'{artifact_path} is not a file'
+        if not self.artifact_path.exists() or not self.artifact_path.is_file():
+            msg = f'{self.artifact_path} is not a file'
             log.error(msg)
             raise Exception(msg)
+
+    def _load_extra_attributes(self):
+        # Load extra attributes from the metadata file if it exists
+        metadata_file_path = Path(self.artifact_path.name + '.metadata.json')
+        if metadata_file_path.exists() and metadata_file_path.is_file():
+            with metadata_file_path.open('r') as f:
+                metadata = json.load(f)
+            self.attributes.update(metadata)
 
     def ask_type(self):
         artifact_types = self.colander_client.get_artifact_types()
