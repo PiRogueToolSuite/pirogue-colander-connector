@@ -2,6 +2,7 @@ import json
 import logging
 import os.path
 import pathlib
+from pathlib import Path
 
 from colander_client.client import Client
 
@@ -68,11 +69,11 @@ class ExperimentCollector:
             log.info(f'Dispatch collection of the {file_type} artifact')
             self.__ensure_file_exists(details)
             self.__dispatch_collection(file_type, details)
-        pcap = self.artifacts.get('network', None)
-        socket_trace = self.artifacts.get('socket_traces', None)
-        sslkeylog = self.artifacts.get('sslkeylog', None)
-        crypto_traces = self.artifacts.get('crypto_traces', None)
-        screen = self.artifacts.get('screen', None)
+        pcap = self.artifacts.pop('network', None)
+        socket_trace = self.artifacts.pop('socket_traces', None)
+        sslkeylog = self.artifacts.pop('sslkeylog', None)
+        crypto_traces = self.artifacts.pop('crypto_traces', None)
+        screen = self.artifacts.pop('screen', None)
         experiment = self.colander_client.create_pirogue_experiment(
             name=self.experiment_name,
             case=self.colander_client.get_case(self.case_id),
@@ -84,6 +85,7 @@ class ExperimentCollector:
                 'aes_trace': crypto_traces,
                 'target_device': self.target_device,
                 'target_artifact': target_artifact,
+                'extra_files': list(self.artifacts.values())
             }
         )
         experiment_id = experiment.get('id')
@@ -111,58 +113,67 @@ class ExperimentCollector:
 
     def __dispatch_collection(self, file_type: str, details: dict):
         filename = details.pop('file')
-        file_path = f'{self.experiment_path}/{filename}'
-        if not os.path.exists(file_path) or not os.path.isfile(file_path):
+        file_path = Path(f'{self.experiment_path}/{filename}')
+        if not file_path.exists() or not file_path.is_file():
             msg = f'{file_path} not found'
             log.error(msg)
             raise Exception(msg)
-        artifact_path = f'{self.experiment_path}/{filename}'
-        if file_type == 'network' and os.path.exists(artifact_path):
+        if file_type == 'network':
             ac = ArtifactCollector(
                 case_id=self.case_id,
-                artifact_path=artifact_path,
+                artifact_path=file_path,
                 artifact_type_name='PCAP',
                 attributes=details,
             )
             artifact = ac.collect()
             self.artifacts[file_type] = artifact
-        elif file_type == 'socket_traces' and os.path.exists(artifact_path):
+        elif file_type == 'socket_traces':
             ac = ArtifactCollector(
                 case_id=self.case_id,
-                artifact_path=artifact_path,
+                artifact_path=file_path,
                 artifact_type_name='SOCKET_T',
                 attributes=details,
             )
             artifact = ac.collect()
             self.artifacts[file_type] = artifact
-        elif file_type == 'crypto_traces' and os.path.exists(artifact_path):
+        elif file_type == 'crypto_traces':
             ac = ArtifactCollector(
                 case_id=self.case_id,
-                artifact_path=artifact_path,
+                artifact_path=file_path,
                 artifact_type_name='CRYPTO_T',
                 attributes=details,
             )
             artifact = ac.collect()
             self.artifacts[file_type] = artifact
-        elif file_type == 'sslkeylog' and os.path.exists(artifact_path):
+        elif file_type == 'sslkeylog':
             ac = ArtifactCollector(
                 case_id=self.case_id,
-                artifact_path=artifact_path,
+                artifact_path=file_path,
                 artifact_type_name='SSLKEYLOG',
                 attributes=details,
             )
             artifact = ac.collect()
             self.artifacts[file_type] = artifact
-        elif file_type == 'screen' and os.path.exists(artifact_path):
+        elif file_type == 'screen':
             ac = ArtifactCollector(
                 case_id=self.case_id,
-                artifact_path=artifact_path,
+                artifact_path=file_path,
                 artifact_type_name='VIDEO',
                 attributes=details,
             )
             artifact = ac.collect()
             self.artifacts[file_type] = artifact
-        elif file_type == 'device' and os.path.exists(artifact_path):
-            with open(artifact_path) as f:
+        elif file_type == 'device':
+            with file_path.open('r') as f:
                 device_details = json.load(f)
             self.target_device = self.__create_device(device_details)
+        else:
+            ac = ArtifactCollector(
+                case_id=self.case_id,
+                artifact_path=file_path,
+                artifact_type_name='OTHER',
+                attributes=details,
+            )
+            artifact = ac.collect()
+            self.artifacts[file_type] = artifact
+
