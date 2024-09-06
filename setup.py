@@ -11,7 +11,7 @@ install_required = [
 
 setup(
     name="pirogue-colander-connector",
-    version="1.0.5",
+    version="1.0.6",
     author="U+039b",
     author_email="hello@pts-project.org",
     description="CLI interface to transfer data from the PiRogue to Colander",

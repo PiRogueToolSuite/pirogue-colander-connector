@@ -1,3 +1,10 @@
+pirogue-colander-connector (1.0.6) unstable; urgency=medium
+
+  * Load additional attributes from the `.metadata.json` file
+  * Automatically upload any other files listed in the `experiment.json` file
+
+ -- U+039b <hello@pts-project.org>  Tue, 13 Aug 2024 17:03:34 +0200
+
 pirogue-colander-connector (1.0.5) unstable; urgency=medium
 
   * Remove unecessary constraints on python lib versions
