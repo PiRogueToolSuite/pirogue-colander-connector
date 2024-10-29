@@ -1,3 +1,9 @@
+pirogue-colander-connector (1.0.7) bookworm; urgency=medium
+
+  * Fix the import of saved metadata
+
+ -- U+039b <hello@pts-project.org>  Tue, 29 Oct 2024 16:58:22 +0100
+
 pirogue-colander-connector (1.0.6) unstable; urgency=medium
 
   * Load additional attributes from the `.metadata.json` file

@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 class ArtifactCollector:
-    def __init__(self, artifact_path: Path, case_id: str, artifact_type_name: str = 'OTHER',
+    def __init__(self, artifact_path: Path, case_id: str, artifact_type_name: str = None,
                  attributes=None):
         configuration = Configuration()
         if not configuration.is_valid:
@@ -51,7 +51,7 @@ class ArtifactCollector:
 
     def _load_extra_attributes(self):
         # Load extra attributes from the metadata file if it exists
-        metadata_file_path = Path(self.artifact_path.name + '.metadata.json')
+        metadata_file_path = self.artifact_path.parent / (self.artifact_path.name + '.metadata.json')
         if metadata_file_path.exists() and metadata_file_path.is_file():
             with metadata_file_path.open('r') as f:
                 metadata = json.load(f)
