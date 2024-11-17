@@ -7,6 +7,7 @@ from rich.prompt import Prompt
 
 from pirogue_colander_connector.collectors.artifact import ArtifactCollector
 from pirogue_colander_connector.collectors.experiment import ExperimentCollector
+from pirogue_colander_connector.collectors.folder import FolderCollector
 from pirogue_colander_connector.commands.configure import Configuration
 
 log = logging.getLogger(__name__)
@@ -41,8 +42,10 @@ def main():
         'collect-artifact',
         help='Upload an artifact to Colander')
     collect_artifact_group.add_argument(
-        'file',
-        type=pathlib.Path)
+        'path',
+        type=pathlib.Path,
+        help='Specify the path of the file or folder you want to be uploaded to Colander'
+    )
     collect_artifact_group.add_argument(
         '-c',
         '--case_id',
@@ -79,8 +82,12 @@ def main():
         config = Configuration()
         config.write_configuration_file(args.base_url, args.api_key)
     elif args.func == 'collect-artifact':
-        ac = ArtifactCollector(args.file, args.case_id)
-        ac.collect()
+        if args.path.is_file():
+            ac = ArtifactCollector(args.path, args.case_id)
+            ac.collect()
+        elif args.path.is_dir():
+            fc = FolderCollector(args.path, args.case_id)
+            fc.collect()
     elif args.func == 'collect-experiment':
         experiment_name = Prompt.ask('Enter the name of your experiment')
         ec = ExperimentCollector(args.path, args.case_id, experiment_name, target_artifact_path=args.target_artifact)

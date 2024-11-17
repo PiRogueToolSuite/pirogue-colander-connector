@@ -10,6 +10,12 @@ from pirogue_colander_connector.commands.configure import Configuration
 
 log = logging.getLogger(__name__)
 
+MIMETYPE_MAPPING = {
+    'image/': 'IMAGE',
+    'video/': 'VIDEO',
+    'application/pdf': 'DOCUMENT',
+    'application/msword': 'DOCUMENT',
+}
 
 class ArtifactCollector:
     def __init__(self, artifact_path: Path, case_id: str, artifact_type_name: str = None,
@@ -27,7 +33,8 @@ class ArtifactCollector:
         self._load_extra_attributes()
 
         if not artifact_type_name:
-            artifact_type_name = self.ask_type()
+            guessed_type = self._guess_artifact_type()
+            artifact_type_name = guessed_type if guessed_type else self.ask_type()
             self.artifact_type = self.colander_client.get_artifact_type_by_short_name(artifact_type_name)
             if not self.artifact_type:
                 log.error('Unable to determine the type of the artifact.')
@@ -56,6 +63,13 @@ class ArtifactCollector:
             with metadata_file_path.open('r') as f:
                 metadata = json.load(f)
             self.attributes.update(metadata)
+
+    def _guess_artifact_type(self) -> str:
+        mimetype = self.attributes.get('mimetype', '')
+        for mt, t in MIMETYPE_MAPPING.items():
+            if mimetype.startswith(mt):
+                return t
+        return ''
 
     def ask_type(self):
         artifact_types = self.colander_client.get_artifact_types()
