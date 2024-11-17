@@ -1,3 +1,9 @@
+pirogue-colander-connector (1.0.9) bookworm; urgency=medium
+
+  * Support .colander_ignore file during the collection process
+
+ -- U+039b <hello@pts-project.org>  Sun, 17 Nov 2024 16:27:46 +0100
+
 pirogue-colander-connector (1.0.8) bookworm; urgency=medium
 
   * Support the collection of an entire folder
